@@ -1,6 +1,13 @@
 import React from 'react';
-import { Image } from 'react-native';
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  View,
+  ScrollView,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
 
 import logo from '../../assets/logo.png';
 import Button from '../../components/Button';
@@ -16,31 +23,46 @@ import {
 } from './style';
 
 const SignIn: React.FC = () => {
+  const navigate = useNavigation();
+
   return (
     <>
-      <Container>
-        <Image source={logo} />
-        <Title>Faça seu logon</Title>
-        <Input name="mail" icon="mail" placeholder="E-mail" />
-        <Input name="password" icon="lock" placeholder="Senha" />
-        <Button
-          onPress={() => {
-            console.log('foi');
-          }}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        enabled
+      >
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flex: 1 }}
         >
-          Entrar
-        </Button>
-        <ForgotPassword
-          onPress={() => {
-            console.log('hello');
-          }}
-        >
-          <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
-        </ForgotPassword>
-      </Container>
+          <Container>
+            <Image source={logo} />
+            <View>
+              <Title>Faça seu logon</Title>
+            </View>
+            <Input name="mail" icon="mail" placeholder="E-mail" />
+            <Input name="password" icon="lock" placeholder="Senha" />
+            <Button
+              onPress={() => {
+                console.log('foi');
+              }}
+            >
+              Entrar
+            </Button>
+            <ForgotPassword
+              onPress={() => {
+                console.log('hello');
+              }}
+            >
+              <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
+            </ForgotPassword>
+          </Container>
+        </ScrollView>
+      </KeyboardAvoidingView>
       <CreateAccountButton
         onPress={() => {
-          console.log('hello');
+          navigate.navigate('SignUp');
         }}
       >
         <Icon name="log-in" size={20} color="#ff9000" />
