@@ -49,6 +49,7 @@ const Input: React.RefForwardingComponent<InputRef, InputProps> = (
       name: fieldName,
       ref: inputValueRef.current,
       path: 'value',
+      // eslint-disable-next-line no-shadow
       setValue(ref: any, value) {
         inputValueRef.current.value = value;
         inputElementRef.current.setNativeProps({ text: value });
@@ -67,7 +68,7 @@ const Input: React.RefForwardingComponent<InputRef, InputProps> = (
   }));
 
   return (
-    <Container istFocus={istFocus}>
+    <Container istFocus={istFocus} isErrored={!!error}>
       <Icon
         name={icon}
         size={20}
