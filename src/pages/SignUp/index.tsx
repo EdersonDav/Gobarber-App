@@ -18,6 +18,7 @@ import logo from '../../assets/logo.png';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import getValidationErrors from '../../utils/getValidationErrors';
+import api from '../../services/api';
 
 import { Container, Title, BackToSignIn, BackToSignInText } from './style';
 
@@ -33,40 +34,43 @@ const SignUp: React.FC = () => {
   const inputNextForEmail = useRef<TextInput>(null);
   const inputNextForPassword = useRef<TextInput>(null);
 
-  const handleSigUp = useCallback(async (data: SignUpFormData) => {
-    try {
-      const schema = Yup.object().shape({
-        name: Yup.string().required('Nome é obrigatório'),
-        email: Yup.string()
-          .required('E-mail é obrigatório')
-          .email('Digite um e-mail válido'),
-        password: Yup.string().min(6, 'Senha no mínimo 6 dígitos'),
-      });
-      await schema.validate(data, {
-        abortEarly: false,
-      });
+  const handleSigUp = useCallback(
+    async (data: SignUpFormData) => {
+      try {
+        const schema = Yup.object().shape({
+          name: Yup.string().required('Nome é obrigatório'),
+          email: Yup.string()
+            .required('E-mail é obrigatório')
+            .email('Digite um e-mail válido'),
+          password: Yup.string().min(6, 'Senha no mínimo 6 dígitos'),
+        });
+        await schema.validate(data, {
+          abortEarly: false,
+        });
 
-      // await api.post('/users', data);
+        await api.post('/users', data);
+        Alert.alert(
+          'Cadastro realizado com sucesso!',
+          'Você já pode logar no app',
+        );
+        navigate.goBack();
+      } catch (error) {
+        if (error instanceof Yup.ValidationError) {
+          const erros = getValidationErrors(error);
 
-      Alert.alert(
-        'Cadastro realizado com sucesso!',
-        'Você já pode logar no app',
-      );
-    } catch (error) {
-      if (error instanceof Yup.ValidationError) {
-        const erros = getValidationErrors(error);
+          // eslint-disable-next-line no-unused-expressions
+          formRef.current?.setErrors(erros);
+          return;
+        }
 
-        // eslint-disable-next-line no-unused-expressions
-        formRef.current?.setErrors(erros);
-        return;
+        Alert.alert(
+          'Erro no cadastro',
+          'Ocorreu um erro ao fazer o cadastro, verifique as informações e tente novamente',
+        );
       }
-
-      Alert.alert(
-        'Erro no cadastro',
-        'Ocorreu um erro ao fazer o cadastro, verifique as informações e tente novamente',
-      );
-    }
-  }, []);
+    },
+    [navigate],
+  );
 
   return (
     <>
