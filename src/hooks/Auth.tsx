@@ -21,6 +21,7 @@ interface Credentials {
 }
 interface AuthContextDTO {
   user: object;
+  loading: boolean;
   signIn(credentials: Credentials): Promise<void>;
   signOut(): void;
 }
@@ -29,6 +30,7 @@ export const AuthContext = createContext<AuthContextDTO>({} as AuthContextDTO);
 
 export const AuthProvider: React.FC = ({ children }) => {
   const [data, setData] = useState<AuthData>({} as AuthData);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadInfoStorage(): Promise<void> {
@@ -41,6 +43,8 @@ export const AuthProvider: React.FC = ({ children }) => {
         const userJs = JSON.parse(user[1]);
         setData({ token: token[1], user: userJs });
       }
+
+      setLoading(false);
     }
     loadInfoStorage();
   }, []);
@@ -65,7 +69,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     setData({} as AuthData);
   }, []);
   return (
-    <AuthContext.Provider value={{ user: data.user, signIn, signOut }}>
+    <AuthContext.Provider value={{ user: data.user, loading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
